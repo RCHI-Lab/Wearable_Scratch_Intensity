@@ -66,6 +66,6 @@ def intensity_save_data_unclean(shift, samp_len_secs):
 shift = 0.25
 samp_len_secs = 1
 
-bc_save_data(shift, samp_len_secs)
+#bc_save_data(shift, samp_len_secs)
 #intensity_save_data_unclean(shift, samp_len_secs)
-#intensity_save_data_clean(shift, samp_len_secs)
+intensity_save_data_clean(shift, samp_len_secs)

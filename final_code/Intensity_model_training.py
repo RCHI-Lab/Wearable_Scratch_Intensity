@@ -95,8 +95,8 @@ dropout = 0.1
 con_crop = 400
 acc_crop = 175
 
-#start_dim = con_crop + acc_crop
-start_dim = acc_crop
+start_dim = con_crop + acc_crop
+#start_dim = acc_crop
 mlp = MLP_grid(start_dim, hidden_layer_dim, num_hidden_layers, dropout)
 loss_function = nn.L1Loss()
 optimizer = torch.optim.Adam(mlp.parameters(), lr= 5e-6)#1e-1)
@@ -106,8 +106,8 @@ X_test = X[0:2, :]
 X_train, X_test = pf.apply_fft(X, X_test, con_crop, acc_crop, sample_len1, sample_len2)
 
 #take only accelerometer values 
-X_train = X_train[:,con_crop:]
-X_test = X_test[:,con_crop:]
+#X_train = X_train[:,con_crop:]
+#X_test = X_test[:,con_crop:]
 
 
 for p in preprocessing:
@@ -116,14 +116,14 @@ for p in preprocessing:
     elif p == 'n':
         X, X_test, normalizer = pf.normalize(X_train, X_test)
 
-joblib.dump(normalizer, '/home/akhil/Documents/research/final_code/intensity_normalizer_acc.gz')
+joblib.dump(normalizer, '/home/akhil/Documents/research/final_code/intensity_normalizer.gz')
 
 rand_inds = np.random.permutation(np.shape(X_train)[0])
 X = X[rand_inds]
 y = y[rand_inds]
 X = torch.from_numpy(X).float()
 y = torch.from_numpy(y).float()
-epochs = 171
+epochs = 150
 for epoch in range(1,epochs+1):
     current_loss = 0.0
     mlp.train()
@@ -141,4 +141,4 @@ for epoch in range(1,epochs+1):
     avg_loss = current_loss / np.shape(X_train)[0]
     print("Epoch:", epoch, "   Train Loss: ", avg_loss)
 
-torch.save(mlp, '/home/akhil/Documents/research/final_code/intensity_model_acc')
+torch.save(mlp, '/home/akhil/Documents/research/final_code/intensity_model')

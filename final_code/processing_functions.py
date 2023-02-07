@@ -290,87 +290,31 @@ def process_sensel_data(num_secs, shift, participant_num, file_num, fh, samp_len
         pressures = []
         agg = [0]*8
         
-        if np.shape(porv)[0] < 2: #this checks to see if there is less than 2 peaks/valleys
-            #print("Less than 2 peaks/valleys")
-            velocities = [np.nan]
-            forces = [np.nan]
-            pressures = [np.nan]
-        else:
-            for n in np.arange(0, np.shape(time)[0]-1):
-                currporv = porv[n]
-                nextporv = porv[n+1]
-                if currporv != nextporv:
-                    currx = x[n]
-                    curry = y[n]
-                    currt = time[n]
-                    nextx = x[n+1]
-                    nexty= y[n+1]
-                    nextt = time[n+1]
-                    startind = pvind[n]
-                    endind = pvind[n+1]
-                    dt = (nextt-currt)/1e6
-                    dist = np.sqrt((nexty-curry)**2 + (nextx-currx)**2)
-                    velocities.append(dist/dt)
-                    total_force_array = totalforces[startind:endind]
-                    perc_nan = np.sum(np.isnan(total_force_array))/np.shape(total_force_array)[0]
-                    if perc_nan > 0.75: #more than 75% are nan
-                        avg_total_force = np.nan
-                        avg_pressure = np.nan 
-                    else:
-                        avg_total_force = np.nanmean(total_force_array)
-                        total_area_array = totalareas[startind:endind]
-                        total_pressure_array  = total_force_array/total_area_array
-                        #avg_pressure = np.nanmean(total_pressure_array)
-                        avg_pressure = 0 
-                    forces.append(avg_total_force)  
-                    pressures.append(avg_pressure)
-                else: #this section removes data where there are two peaks or two valleys in a row
-                    #print("Two peaks/valleys in a row")
-                    velocities = [np.nan]
-                    forces = [np.nan]
-                    pressures = [np.nan]
-                    break
-                
-        
+        for n in np.arange(0, np.shape(time)[0]-1):
+            currporv = porv[n]
+            nextporv = porv[n+1]
+            if currporv != nextporv:
+                currx = x[n]
+                curry = y[n]
+                currt = time[n]
+                nextx = x[n+1]
+                nexty= y[n+1]
+                nextt = time[n+1]
+                startind = pvind[n]
+                endind = pvind[n+1]
+                dt = (nextt-currt)/1e6
+                dist = np.sqrt((nexty-curry)**2 + (nextx-currx)**2)
+                velocities.append(dist/dt)
+                    
+             
         #print(velocities)
         avg_vel = np.nanmean(velocities)
         med_vel = np.nanmedian(velocities)
         vel_agg.append([avg_vel, med_vel])
-        agg[4] = np.nanmean(forces)
+        agg[4] = np.nanmean(totalforces)
         agg[5] = np.nanmean(pressures)
         all_agg.append(agg)
         
-        if s == 5000000:
-        #if np.isnan(agg[4]) == True:    
-            dt = dts[((dts >= s) & (dts < s2))]
-            yposnew = ypos.reshape((np.shape(ypos)[0],1))
-            yposs = yposnew[((dts >= s) & (dts < s2))]
-            
-            '''
-            plt.plot(dt,yposs)
-            plt.plot(time,y, 'o')
-            plt.xlim([s, s2])
-            #plt.ylim([25, 130])      
-            plt.xlabel('Time')
-            plt.ylabel('Y position (mm)')
-            plt.title(str(num)+ '    Velocity: ' + str(round(avg_vel, 3)) + '    Force: ' + str(round(agg[4],3)))
-            plt.show()
-            num+=1
-
-            totalfsnew = totalforces.reshape((np.shape(ypos)[0],1))
-            totalfs = totalfsnew[((dts >= s) & (dts < s2))]
-            plt.plot(dt, totalfs)
-            plt.xlim([s, s2])
-            #plt.ylim([0, 300])
-            plt.xlabel('Time')
-            plt.ylabel('Total Force (g)')
-            plt.show()
-            '''
-            #print("Intensity:", avg_vel*agg[4]*0.0098)
-        
-       # print(avg_vel, med_vel)
-    
-    #df = pd.DataFrame(vel_agg, columns = ['Average Velocity (mm/s)', 'Median Velocity (mm/s)'])  
     combined = np.hstack((all_agg,vel_agg))
 
     #print()
@@ -438,7 +382,6 @@ def process_sensel_data_cleaner(num_secs, shift, participant_num, file_num, fh, 
     xpos_in = np.copy(xpos)
     xpos_in[np.isnan(xpos)] = np.interp(x, xp, fp)
 
-    
     yhat = savgol_filter(ypos_in, 31, 5)
     #plt.plot(dts[plotting_start_ind:plotting_end_ind], yhat[plotting_start_ind:plotting_end_ind]) #plot interpolated and smoothed signal 
     #plt.title('Smoothed YPosition vs Time with Mins/Maxs')
@@ -501,8 +444,6 @@ def process_sensel_data_cleaner(num_secs, shift, participant_num, file_num, fh, 
         pressures = []
         agg = [0]*8
 
-
-        
         cond1 = False
         cond2 = False
         cond4 = False
@@ -510,7 +451,7 @@ def process_sensel_data_cleaner(num_secs, shift, participant_num, file_num, fh, 
         
         if cond1 == True or cond3 == True:
             velocities = [np.nan]
-            forces = [np.nan]
+            #forces = [np.nan]
             pressures = [np.nan]
         else: 
             for n in np.arange(0, np.shape(time)[0]-1):
@@ -527,26 +468,20 @@ def process_sensel_data_cleaner(num_secs, shift, participant_num, file_num, fh, 
                     endind = pvind[n+1]
                     dt = (nextt-currt)/1e6
                     dist = np.sqrt((nexty-curry)**2 + (nextx-currx)**2)
-                    total_force_array = totalforces[startind:endind]
-                    perc_nan = np.sum(np.isnan(total_force_array))/np.shape(total_force_array)[0]
+                    y_array = ypos[startind:endind]
+                    perc_nan = np.sum(np.isnan(y_array))/np.shape(y_array)[0]
                     if perc_nan > 0.50:
-                        avg_total_force = np.nan
-                        avg_pressure = np.nan 
                         v = np.nan
                         cond2 = True
                     else:
                         v = dist/dt
-                        avg_total_force = np.nanmean(total_force_array)
                         total_area_array = totalareas[startind:endind]
-                        total_pressure_array  = total_force_array/total_area_array
                         avg_pressure = 0 
                     velocities.append(v)
-                    forces.append(avg_total_force)  
-                    pressures.append(avg_pressure)
                 else: #this section removes data where there are two peaks or two valleys in a row
                     #print("Two peaks/valleys in a row")
                     velocities = [np.nan]
-                    forces = [np.nan]
+                    #forces = [np.nan]
                     pressures = [np.nan]
                     cond4 = True 
                     break
@@ -556,7 +491,7 @@ def process_sensel_data_cleaner(num_secs, shift, participant_num, file_num, fh, 
         avg_vel = np.nanmean(velocities)
         med_vel = np.nanmedian(velocities)
         vel_agg.append([avg_vel, med_vel])
-        agg[4] = np.nanmean(forces)
+        agg[4] = np.nanmean(totalforces)
         agg[5] = np.nanmean(pressures)
         all_agg.append(agg)
             

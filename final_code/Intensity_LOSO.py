@@ -207,7 +207,7 @@ for params in combs:
         X_test = torch.from_numpy(X_test).float()
         y_train = torch.from_numpy(y_train).float()
         y_test = torch.from_numpy(y_test).float()
-        epochs = 171
+        epochs = 150
         for epoch in range(1,epochs+1):
             #print(f'Starting epoch {epoch+1}')
             current_loss = 0.0
