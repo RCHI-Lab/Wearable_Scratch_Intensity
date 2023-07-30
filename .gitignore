@@ -11,3 +11,5 @@ fig_dataset/
 .ipynb_checkpoints/
 final_code/data/
 *.docx
+*.DS_Store
+*.pyc
