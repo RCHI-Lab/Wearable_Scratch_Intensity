@@ -5,7 +5,6 @@
 *.png
 *.txt
 *.pickle
-*.zip
 publication_final_files/
 fig_dataset/
 .ipynb_checkpoints/
