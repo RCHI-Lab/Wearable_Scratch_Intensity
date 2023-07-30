@@ -8,7 +8,7 @@ All data can be downloaded from [here](https://drive.google.com/drive/folders/1f
 
 The "final_code" directory consists of 6 scripts for training and testing all 6 models using LOSO-CV. It also contains the final intensity regression model, normalizer, and script  "intensity_model_training.py" for training this model using all 20 participants' data from the first human study. It also has various functions in the "processing_functions.py" script. "save_data.py" uses the processing functions and data to save the datasets into pickle files (located under "data" directory)
 
-The "final_paper" directory consists of 4 jupyter notebook files used to generate results and create figures for the paper. 
+The "final_paper" directory consists of 4 jupyter notebook files used to generate results and create figures for the paper. It additionally contains a folder, "figure_data", which contains csv files for many of the results figures. 
 
 The "teensy_code" folder has the code for the teensy to sample the contact microphone and accelerometer. 
 
